@@ -31,26 +31,40 @@ int main()
 	FILE *pReadFile = NULL;		//ファイルパス一覧読み込みポインタ
 	int funcRtn;				//関数戻り値格納変数
 
+	int cnt = 0;	//debug conter
+
 	//ファイル一覧を作成する
 	fg_MakeFileList();
 
-	//ファイルパス一覧を開く
-	funcRtn = fg_OpenFile("pathlist.txt", pbuff, pReadFile);
-	ErrorCheck(funcRtn);
-	//ファイルを開く
-	funcRtn = fg_OpenFile(pbuff, buff, ReadFile);
-	//ErrorCheck(funcRtn);
-	//デバッグ
-	printf("%s\n", buff);
-	//<LD>検索
+	do
+	{
+		//バッファのクリア
+		memset(pbuff, '\0', 256);
+		//ファイルパス一覧を開く
+		funcRtn = fg_OpenFile("pathlist.txt", pbuff, pReadFile);
+		ErrorCheck(funcRtn);
+		do
+		{
+			cnt++;
+			//buffクリア
+			memset(buff, '\0', 256);
+			//ファイルを開く
+			funcRtn = fg_OpenFile(pbuff, buff, ReadFile);
+			ErrorCheck(funcRtn);
+			//デバッグ
+			printf("%s\n", buff);
+			//<LD>検索
 
-	//ラダーを解析する
-
-	//buffクリア
-	memset(buff, '\0', 256);
-
-	memset(pbuff, '\0', 256);
+			//ラダーを解析する
+			if (cnt == 10)
+			{
+				getchar();
+				return 0;
+			}
+		} while (buff != NULL);
+		fclose(ReadFile);
+	} while (pbuff != NULL);
+	fclose(pReadFile);
 	getchar();
-
-    return 0;
+	return 0;
 }

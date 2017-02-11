@@ -1,5 +1,8 @@
 #include "stdafx.h"
 
+//ファイルスコープ関数の宣言
+int fs_CRLFDel(char *buff);
+
 /* 関数名：OpenFile                                       */
 /* ファイルを開く                                         */
 /* 戻り値：                                               */
@@ -10,7 +13,6 @@
 int fg_OpenFile(char *FileName, char *buff, FILE *ReadFile)
 {
 	errno_t err;	//ファイルオープン戻り値格納用変数
-	char *next_token = NULL;	//strtok_s用
 
 	if (ReadFile == NULL)
 	{
@@ -18,11 +20,11 @@ int fg_OpenFile(char *FileName, char *buff, FILE *ReadFile)
 		if ((err = fopen_s(&ReadFile, FileName, "r")) == 0)
 		{
 			//ファイルを開けた
-			if (fgets(buff, sizeof(char) * 256, ReadFile) != NULL)
+			if (fgets(buff, 256, ReadFile) != NULL)
 			{
+				printf("file pointer:%p\n", (void*)ReadFile);
 				//一行読み込み
-				strtok_s(buff, "\n\0", &next_token);
-
+				fs_CRLFDel(buff);
 				return 0;
 			}
 			else {
@@ -38,9 +40,10 @@ int fg_OpenFile(char *FileName, char *buff, FILE *ReadFile)
 	}
 	else {
 		//ファイルを開けた
-		if (fgets(buff, sizeof(char) * 256, ReadFile) != NULL)
+		if (fgets(buff, 256, ReadFile) != NULL)
 		{
 			//一行読み込み
+			fs_CRLFDel(buff);
 			return 0;
 		}
 		else {
@@ -51,9 +54,33 @@ int fg_OpenFile(char *FileName, char *buff, FILE *ReadFile)
 	return 2;
 }
 
+/* 関数名：fg_MakeFileList                                */
+/* ファイルを開く                                         */
+/* 戻り値：                                               */
+/*  0:ファイルを開けた                                    */
 int fg_MakeFileList()
 {
 	//ファイル一覧作成バッチファイルを実行する
 	system("MakePathlist.bat");
+	return 0;
+}
+
+/* 関数名：fs_CRLFDel                                     */
+/* ファイルを開く                                         */
+/* 戻り値：                                               */
+/*  0:ファイルを開けた                                    */
+int fs_CRLFDel(char *buff)
+{
+	int i;
+	for (i = 0; i < strlen(buff); i++)
+	{
+		//文字列の長さだけループ
+		if (*(buff + i) == '\n')
+		{
+			//CRLFがあればNULLにする
+			*(buff + i) = '\0';
+			return 0;
+		}
+	}
 	return 0;
 }
