@@ -9,10 +9,11 @@ int fg_LDFinder(char *buff)
 {
 	if (strstr(buff, "<LD>") != NULL)
 	{
-		//<LD>”­Œ©
-		return 1;
+		//•¶š—ñ”­Œ©
+		return 4;
 	}
-	return 0;
+	//•¶š—ñ–¢”­Œ©
+	return 5;
 }
 
 /* ŠÖ”–¼FStringFinder                                   */

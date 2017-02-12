@@ -7,20 +7,21 @@ int fs_CRLFDel(char *buff);
 /* ファイルを開く                                         */
 /* 戻り値：                                               */
 /*  0:ファイルを開けた                                    */
-/* -1:ファイルを開けなかった                              */
-/*  1:ファイルの最後まで読んだ                            */
-/*  2:異常終了                                            */
-int fg_OpenFile(char *FileName, char *buff, FILE *ReadFile)
+/*  1:ファイルを開けなかった                              */
+/*  2:ファイルの最後まで読んだ                            */
+/*  3:異常終了                                            */
+int fg_OpenFile(char *FileName, char *buff, FILE **ReadFile)
 {
-	errno_t err;	//ファイルオープン戻り値格納用変数
+	FILE *temp = NULL;	//一時的なファイルポインタ
+	errno_t err;		//ファイルオープン戻り値格納用変数
 
-	if (ReadFile == NULL)
+	if (*ReadFile == NULL)
 	{
 		//ファイルポインタがヌルなら初回オープン
-		if ((err = fopen_s(&ReadFile, FileName, "r")) == 0)
+		if ((err = fopen_s(ReadFile, FileName, "r")) == 0)
 		{
 			//ファイルを開けた
-			if (fgets(buff, 256, ReadFile) != NULL)
+			if (fgets(buff, 256, *ReadFile) != NULL)
 			{
 				printf("file pointer:%p\n", (void*)ReadFile);
 				//一行読み込み
@@ -29,29 +30,30 @@ int fg_OpenFile(char *FileName, char *buff, FILE *ReadFile)
 			}
 			else {
 				//ファイルの最後まで読んだ
-				return 1;
+				return 2;
 			}
 		}
 		else {
 			//ファイルが開けなかった
 			printf("Can't open file(%s).\n", FileName);
-			return -1;
+			return 1;
 		}
 	}
 	else {
 		//ファイルを開けた
-		if (fgets(buff, 256, ReadFile) != NULL)
+		if (fgets(buff, 256, *ReadFile) != NULL)
 		{
+			printf("file pointer:%p\n", (void*)ReadFile);
 			//一行読み込み
 			fs_CRLFDel(buff);
 			return 0;
 		}
 		else {
 			//ファイルの最後まで読んだ
-			return 1;
+			return 2;
 		}
 	}
-	return 2;
+	return 3;
 }
 
 /* 関数名：fg_MakeFileList                                */
