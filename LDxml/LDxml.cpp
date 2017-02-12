@@ -20,18 +20,18 @@ int fs_ErrorCheck(int funcRtn)
 		exit(1);
 	case 2:
 		//ファイルの最後まで読んだ
-		printf("ファイルの最後まで読み終わりました。\n");
+		//printf("ファイルの最後まで読み終わりました。\n");
 		break;
 	case 3:
 		//異常終了
 		exit(1);
 	case 4:
 		//文字列を発見した
-		printf("文字列を発見しました。\n");
+		//printf("文字列を発見しました。\n");
 		break;
 	case 5:
 		//文字列未発見
-		printf("文字列が見つかりません。\n");
+		//printf("文字列が見つかりません。\n");
 		break;
 	default:
 		break;
@@ -84,7 +84,7 @@ int main()
 			//戻り値チェック
 			fs_ErrorCheck(funcRtn);
 			//ラダーを解析する
-			
+			fg_StringFinder(buff);
 
 		} while (buff != NULL);
 		//ファイルを閉じる
