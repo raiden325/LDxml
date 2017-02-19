@@ -1,11 +1,8 @@
-// stdafx.h : 標準のシステム インクルード ファイルのインクルード ファイル、または
-// 参照回数が多く、かつあまり変更されない、プロジェクト専用のインクルード ファイル
-// を記述します。
-//
+#pragma once
+
+/* stdafx.h */
 #ifndef __STDAFX_H__
 #define __STDAFX_H__
-
-#pragma once
 
 #include "targetver.h"
 
@@ -17,6 +14,11 @@
 #include "finder.h"
 #include "analysis.h"
 
-#endif /*__STDAFX_H__*/
+//構造体の宣言
+struct _gPairData{
+	char Element[20];	//要素文字列
+	int StartLine;		//開始行
+	int EndLine;		//終了行
+};
 
-// TODO: プログラムに必要な追加ヘッダーをここで参照してください
+#endif /*__STDAFX_H__*/

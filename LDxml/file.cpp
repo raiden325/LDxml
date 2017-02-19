@@ -23,7 +23,7 @@ int fg_OpenFile(char *FileName, char *buff, FILE **ReadFile)
 			//ファイルを開けた
 			if (fgets(buff, 256, *ReadFile) != NULL)
 			{
-				printf("file pointer1:%p\n", (void*)ReadFile);
+				//printf("file pointer1:%p\n", (void*)ReadFile);
 				//一行読み込み
 				fs_CRLFDel(buff);
 				return 0;
@@ -43,7 +43,7 @@ int fg_OpenFile(char *FileName, char *buff, FILE **ReadFile)
 		//ファイルを開けた
 		if (fgets(buff, 256, *ReadFile) != NULL)
 		{
-			printf("file pointer2:%p\n", (void*)ReadFile);
+			//printf("file pointer2:%p\n", (void*)ReadFile);
 			//一行読み込み
 			fs_CRLFDel(buff);
 			return 0;

@@ -4,6 +4,9 @@
 //ファイルスコープ関数の宣言
 int fs_ErrorCheck(int funcRtn);
 
+//構造体の宣言
+extern struct _gPairData BlkData;
+
 /* 関数名：fs_ErrorCheck                                  */
 /* 戻り値ごとに処理を分ける                               */
 /* 戻り値：                                               */
@@ -33,6 +36,14 @@ int fs_ErrorCheck(int funcRtn)
 		//文字列未発見
 		//printf("文字列が見つかりません。\n");
 		break;
+	case  6:
+		//ブロックの終わりを発見
+		printf("ブロックの終わりを発見しました。\n");
+		break;
+	case 7:
+		//ブロックの終わりと一致する始まりが見つからなかった
+		printf("ブロックの終わりを発見しましたが、対応するブロックの始まりが見つかりませんでした。\n");
+		break;
 	default:
 		break;
 	}
@@ -46,12 +57,22 @@ int main()
 	FILE *ReadFile = NULL;		//ファイル読み込みポインタ
 	FILE *pReadFile = NULL;		//ファイルパス一覧読み込みポインタ
 	int funcRtn;				//関数戻り値格納変数
+	_gPairData BlkData[1000];	//ブロックのデータ構造体配列
+	int BlkCnt;					//ブロックのデータ構造体配列の要素カウンタ
+	int LineCnt;				//行カウンタ
+	bool LDFlag;				//<LD>発見フラグ
 
 	//ファイル一覧を作成する
 	fg_MakeFileList();
 
 	do
 	{
+		//変数の初期化
+		BlkCnt = 0;
+		LineCnt = 0;
+		LDFlag = false;
+		//構造体の初期化
+		memset(BlkData, '\0', sizeof(_gPairData)*1000);
 		//バッファのクリア
 		memset(pbuff, '\0', 256);
 		//ファイルパス一覧を開く
@@ -72,19 +93,43 @@ int main()
 			//戻り値チェック
 			fs_ErrorCheck(funcRtn);
 			//デバッグ
-			printf("%s\n", buff);
+			//printf("%s\n", buff);
 			if (funcRtn == 2)
 			{
 				//ファイルの最後まで読んだ
 				break;
 			}
 
-			//<LD>検索
-			funcRtn = fg_LDFinder(buff);
-			//戻り値チェック
-			fs_ErrorCheck(funcRtn);
-			//ラダーを解析する
-			fg_StringFinder(buff);
+			if (LDFlag == false)
+			{
+				//<LD>検索
+				funcRtn = fg_LDFinder(buff);
+				//戻り値チェック
+				fs_ErrorCheck(funcRtn);
+				if (funcRtn == 4)
+				{
+					//<LD>を発見した
+					strcpy_s(BlkData[BlkCnt].Element, "LD");
+					BlkData[BlkCnt].StartLine = LineCnt;
+					BlkCnt++;
+					break;
+				}
+			}
+			else {
+				//文字列の検索
+				fg_StringFinder(buff, BlkData, &BlkCnt, LineCnt);
+				//戻り値チェック
+				fs_ErrorCheck(funcRtn);
+				if (funcRtn == 6)
+				{
+					//ブロックの終わりを発見した
+
+					break;
+				}
+			}
+			//debug
+			printf("Element(%d):%s\n", BlkCnt, BlkData[BlkCnt - 1].Element);
+			LineCnt++;
 
 		} while (buff != NULL);
 		//ファイルを閉じる
@@ -93,6 +138,7 @@ int main()
 	} while (pbuff != NULL);
 	//ファイルを閉じる
 	fclose(pReadFile);
+	printf("End\n");
 	getchar();
 	return 0;
 }
