@@ -23,18 +23,18 @@ int fs_ErrorCheck(int funcRtn)
 		exit(1);
 	case 2:
 		//ファイルの最後まで読んだ
-		//printf("ファイルの最後まで読み終わりました。\n");
+		printf("ファイルの最後まで読み終わりました。\n");
 		break;
 	case 3:
 		//異常終了
 		exit(1);
 	case 4:
 		//文字列を発見した
-		//printf("文字列を発見しました。\n");
+		printf("文字列を発見しました。\n");
 		break;
 	case 5:
 		//文字列未発見
-		//printf("文字列が見つかりません。\n");
+		printf("文字列が見つかりません。\n");
 		break;
 	case  6:
 		//ブロックの終わりを発見
@@ -99,6 +99,8 @@ int main()
 				//ファイルの最後まで読んだ
 				break;
 			}
+			//行カウンタ　インクリメント
+			LineCnt++;
 
 			if (LDFlag == false)
 			{
@@ -112,7 +114,8 @@ int main()
 					strcpy_s(BlkData[BlkCnt].Element, "LD");
 					BlkData[BlkCnt].StartLine = LineCnt;
 					BlkCnt++;
-					break;
+					LDFlag = true;
+					//continue;
 				}
 			}
 			else {
@@ -123,14 +126,9 @@ int main()
 				if (funcRtn == 6)
 				{
 					//ブロックの終わりを発見した
-
-					break;
+					//continue;
 				}
 			}
-			//debug
-			printf("Element(%d):%s\n", BlkCnt, BlkData[BlkCnt - 1].Element);
-			LineCnt++;
-
 		} while (buff != NULL);
 		//ファイルを閉じる
 		fclose(ReadFile);
@@ -138,6 +136,7 @@ int main()
 	} while (pbuff != NULL);
 	//ファイルを閉じる
 	fclose(pReadFile);
+
 	printf("End\n");
 	getchar();
 	return 0;

@@ -21,6 +21,7 @@ int fg_LDFinder(char *buff)
 /* 戻り値：                                               */
 /*  4:文字列を発見した                                    */
 /*  6:ブロックの終わりを発見した                          */
+/*  7:ブロックの終わりを発見したが対応する始まりがない    */
 int fg_StringFinder(char *buff, _gPairData *BlkData, int *BlkCnt, int LineCnt)
 {
 	int i = 0;				//buffカウンタ
@@ -85,15 +86,8 @@ int fg_StringFinder(char *buff, _gPairData *BlkData, int *BlkCnt, int LineCnt)
 				}
 				else {
 					//ブロックの終わり
-					//一時的にここで戻る
-					//対になるブロックの構造体に最終行を格納したいので
-					//文字列を入れた後、比較するルーチン追加
-					//一致する構造体へ最終行を格納する
-#if 0
 					String[n] = *(buff + i);
 					++n;
-#endif
-					return 6;
 				}
 				break;
 			}
@@ -101,6 +95,7 @@ int fg_StringFinder(char *buff, _gPairData *BlkData, int *BlkCnt, int LineCnt)
 		//カウンタ　インクリメント
 		++i;
 	}
+
 	if (SlFlag == false)
 	{
 		//ブロックの始まり
@@ -110,14 +105,14 @@ int fg_StringFinder(char *buff, _gPairData *BlkData, int *BlkCnt, int LineCnt)
 		//行を格納する
 		BlkData[*BlkCnt].StartLine = LineCnt;
 		//要素を進める
-		*BlkCnt++;
+		*BlkCnt = *BlkCnt + 1;
 		return 4;
 	}
 	else {
 		//ブロックの終わり
-		int i = 0;
+		int i;
 		//構造体の要素と比較する
-		while (BlkData[i].Element == NULL)
+		for(i = 0; i < *BlkCnt; i++)
 		{
 			if(strcmp(BlkData[i].Element,String) == 0)
 			{
@@ -126,7 +121,6 @@ int fg_StringFinder(char *buff, _gPairData *BlkData, int *BlkCnt, int LineCnt)
 				BlkData[i].EndLine = LineCnt;
 				return 6;
 			}
-			i++;
 		}
 		//対応するブロックなし
 		return 7;
